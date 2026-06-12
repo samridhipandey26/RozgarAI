@@ -1,0 +1,336 @@
+/* ui/styles.css — RozgarAI Dark Theme */
+/* Loaded as string in app.py via st.markdown() */
+
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --brand-orange: #F97316;
+  --brand-orange-dim: #7C3A0A;
+  --bg-base: #0D0D0D;
+  --bg-surface: #1A1A1A;
+  --bg-surface-2: #252525;
+  --text-primary: #F5F5F5;
+  --text-muted: #6B7280;
+  --success: #22C55E;
+  --error: #EF4444;
+  --border: #2D2D2D;
+  --radius-card: 12px;
+  --radius-pill: 999px;
+}
+
+html, body, [class*="css"] {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-base) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Hide Streamlit chrome */
+#MainMenu, footer, header { visibility: hidden; }
+.block-container { padding-top: 0.5rem !important; max-width: 100% !important; }
+.stApp { background-color: var(--bg-base); }
+
+/* ── Branded header ─────────────────────────────────────────────────────── */
+.rz-header {
+  background: linear-gradient(135deg, #0D0D0D 0%, #1A1A1A 100%);
+  border-bottom: 2px solid var(--brand-orange);
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.rz-logo {
+  font-family: 'Baloo 2', sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--brand-orange);
+  letter-spacing: -0.5px;
+}
+.rz-tagline {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-family: 'Baloo 2', sans-serif;
+}
+.rz-badge {
+  margin-left: auto;
+  background: rgba(249,115,22,0.12);
+  border: 1px solid var(--brand-orange);
+  color: var(--brand-orange);
+  padding: 4px 14px;
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* ── Agent pipeline dots ─────────────────────────────────────────────────── */
+.agent-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  margin-bottom: 6px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  transition: border-color 0.3s;
+}
+.agent-row.running { border-color: var(--brand-orange); }
+.agent-row.done    { border-color: var(--success); }
+.agent-row.error   { border-color: var(--error); }
+
+.agent-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.agent-dot-pending { background: #374151; }
+.agent-dot-running { background: var(--brand-orange); animation: pulse 1s infinite; }
+.agent-dot-done    { background: var(--success); }
+.agent-dot-error   { background: var(--error); }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1;   transform: scale(1.0); }
+  50%      { opacity: 0.4; transform: scale(0.85); }
+}
+
+.agent-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  flex: 1;
+}
+.agent-time {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: 'Courier New', monospace;
+}
+
+/* ── Log console ─────────────────────────────────────────────────────────── */
+.log-console {
+  background: #0A0A0A;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  color: #22C55E;
+  max-height: 140px;
+  overflow-y: auto;
+  line-height: 1.6;
+}
+
+/* ── Job match cards ─────────────────────────────────────────────────────── */
+.job-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 16px;
+  border-left: 4px solid var(--brand-orange);
+  margin-bottom: 10px;
+  transition: border-color 0.2s;
+}
+.job-card:hover { border-color: var(--brand-orange); }
+.job-title {
+  font-family: 'Baloo 2', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--brand-orange);
+}
+.job-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+.job-wage {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--success);
+}
+.match-badge {
+  background: rgba(34,197,94,0.1);
+  border: 1px solid var(--success);
+  color: var(--success);
+  border-radius: var(--radius-pill);
+  padding: 2px 10px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* ── Skill pills ─────────────────────────────────────────────────────────── */
+.skill-pill {
+  display: inline-block;
+  background: var(--brand-orange-dim);
+  color: var(--brand-orange);
+  border-radius: var(--radius-pill);
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  margin: 2px;
+}
+
+/* ── Interview tip cards ─────────────────────────────────────────────────── */
+.tip-card {
+  background: var(--bg-surface);
+  border-left: 4px solid var(--brand-orange);
+  border-radius: 0 10px 10px 0;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: var(--text-primary);
+  font-family: 'Baloo 2', sans-serif;
+  margin-bottom: 8px;
+  line-height: 1.6;
+}
+.tip-number {
+  font-size: 11px;
+  color: var(--brand-orange);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+/* ── WhatsApp mockup ─────────────────────────────────────────────────────── */
+.whatsapp-container {
+  background: #0B141A;
+  border-radius: 16px;
+  border: 1px solid #1F2C34;
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+}
+.whatsapp-header {
+  background: #1F2C34;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.whatsapp-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--brand-orange);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+.whatsapp-name  { font-weight: 700; font-size: 14px; color: #E9EBF0; }
+.whatsapp-status { font-size: 11px; color: #22C55E; }
+.whatsapp-body {
+  padding: 10px 8px;
+  min-height: 300px;
+  max-height: 420px;
+  overflow-y: auto;
+}
+.whatsapp-bubble-incoming {
+  background: #1F2C34;
+  color: #E9EBF0;
+  border-radius: 0 8px 8px 8px;
+  padding: 8px 12px;
+  max-width: 82%;
+  margin: 4px 8px 4px 4px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.whatsapp-bubble-outgoing {
+  background: #005C4B;
+  color: #E9EBF0;
+  border-radius: 8px 0 8px 8px;
+  padding: 8px 12px;
+  max-width: 82%;
+  margin: 4px 4px 4px auto;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.otp-display {
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--brand-orange);
+  letter-spacing: 12px;
+  text-align: center;
+  padding: 16px;
+  font-family: 'Baloo 2', monospace;
+}
+.whatsapp-timestamp {
+  font-size: 10px;
+  color: #6B7280;
+  text-align: right;
+  margin-top: 2px;
+}
+
+/* ── Stats bar ───────────────────────────────────────────────────────────── */
+.stats-bar {
+  display: flex;
+  gap: 0;
+  border-top: 1px solid var(--border);
+  margin-top: 16px;
+}
+.stat-block {
+  flex: 1;
+  background: var(--bg-surface);
+  padding: 14px 16px;
+  border-right: 1px solid var(--border);
+  text-align: center;
+}
+.stat-block:last-child { border-right: none; }
+.stat-value {
+  font-family: 'Baloo 2', sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--brand-orange);
+  line-height: 1;
+}
+.stat-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* ── CTA buttons ─────────────────────────────────────────────────────────── */
+.stButton > button {
+  border-radius: 8px !important;
+  font-weight: 700 !important;
+  font-family: 'Inter', sans-serif !important;
+  transition: all 0.2s ease !important;
+}
+.stButton > button[kind="primary"] {
+  background: var(--brand-orange) !important;
+  border: none !important;
+  color: white !important;
+}
+.stButton > button[kind="primary"]:hover {
+  background: #EA6C0A !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 16px rgba(249,115,22,0.4) !important;
+}
+
+/* ── Input fields ────────────────────────────────────────────────────────── */
+.stTextInput > div > div > input,
+.stSelectbox > div > div,
+.stSlider > div {
+  background: var(--bg-surface-2) !important;
+  border-color: var(--border) !important;
+  color: var(--text-primary) !important;
+  border-radius: 8px !important;
+}
+
+/* ── Section headings ────────────────────────────────────────────────────── */
+.section-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── Confetti burst (pure CSS, triggered by .done class) ─────────────────── */
+.confetti-wrap {
+  text-align: center;
+  font-size: 40px;
+  animation: pop 0.5s ease;
+}
+@keyframes pop {
+  0%   { transform: scale(0.5); opacity: 0; }
+  70%  { transform: scale(1.2); }
+  100% { transform: scale(1.0); opacity: 1; }
+}

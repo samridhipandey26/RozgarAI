@@ -1,0 +1,98 @@
+[
+  {
+    "job_id": "j001",
+    "contractor_id": "c001",
+    "title": "Construction Helper",
+    "title_hindi": "निर्माण सहायक",
+    "location": "Lucknow, Gomti Nagar",
+    "pin_code": "226010",
+    "wage_per_day": 520,
+    "skills_required": ["helper", "loader"],
+    "start_date": "2026-06-14",
+    "openings": 5
+  },
+  {
+    "job_id": "j002",
+    "contractor_id": "c001",
+    "title": "Construction Helper",
+    "title_hindi": "निर्माण सहायक",
+    "location": "Kanpur, Kidwai Nagar",
+    "pin_code": "208011",
+    "wage_per_day": 500,
+    "skills_required": ["helper"],
+    "start_date": "2026-06-15",
+    "openings": 3
+  },
+  {
+    "job_id": "j003",
+    "contractor_id": "c002",
+    "title": "Electrician",
+    "title_hindi": "इलेक्ट्रीशियन",
+    "location": "Lucknow, Hazratganj",
+    "pin_code": "226001",
+    "wage_per_day": 700,
+    "skills_required": ["electrician"],
+    "start_date": "2026-06-13",
+    "openings": 2
+  },
+  {
+    "job_id": "j004",
+    "contractor_id": "c002",
+    "title": "Plumber",
+    "title_hindi": "प्लंबर",
+    "location": "Agra, Tajganj",
+    "pin_code": "282001",
+    "wage_per_day": 580,
+    "skills_required": ["plumber"],
+    "start_date": "2026-06-14",
+    "openings": 2
+  },
+  {
+    "job_id": "j005",
+    "contractor_id": "c003",
+    "title": "Warehouse Loader",
+    "title_hindi": "वेयरहाउस लोडर",
+    "location": "Lucknow, Chinhat",
+    "pin_code": "226028",
+    "wage_per_day": 540,
+    "skills_required": ["loader"],
+    "start_date": "2026-06-13",
+    "openings": 8
+  },
+  {
+    "job_id": "j006",
+    "contractor_id": "c003",
+    "title": "Truck Driver",
+    "title_hindi": "ट्रक ड्राइवर",
+    "location": "Varanasi, Sigra",
+    "pin_code": "221010",
+    "wage_per_day": 750,
+    "skills_required": ["driver"],
+    "start_date": "2026-06-15",
+    "openings": 1
+  },
+  {
+    "job_id": "j007",
+    "contractor_id": "c001",
+    "title": "Mason / Bricklayer",
+    "title_hindi": "राजमिस्त्री",
+    "location": "Allahabad, Naini",
+    "pin_code": "211008",
+    "wage_per_day": 800,
+    "skills_required": ["mason"],
+    "start_date": "2026-06-16",
+    "openings": 2
+  },
+  {
+    "job_id": "j008",
+    "contractor_id": "c002",
+    "title": "Painter",
+    "title_hindi": "पेंटर",
+    "location": "Meerut, Shastri Nagar",
+    "pin_code": "250004",
+    "wage_per_day": 600,
+    "skills_required": ["painter"],
+    "start_date": "2026-06-17",
+    "openings": 3
+  }
+]
