@@ -15,9 +15,10 @@ interface TraceProps {
   sessionId: string;
   onGateReached?: (data: any) => void;
   onComplete?: (data: any) => void;
+  onAgentCompleted?: (agent: string, data: any) => void;
 }
 
-export default function AgentPipelineTrace({ sessionId, onGateReached, onComplete }: TraceProps) {
+export default function AgentPipelineTrace({ sessionId, onGateReached, onComplete, onAgentCompleted }: TraceProps) {
   const [events, setEvents] = useState<any[]>([]);
   const [activeAgent, setActiveAgent] = useState<string | null>(null);
   const [completedAgents, setCompletedAgents] = useState(new Set<string>());
@@ -37,6 +38,7 @@ export default function AgentPipelineTrace({ sessionId, onGateReached, onComplet
       } else if (data.event === 'agent_completed') {
         setCompletedAgents(prev => new Set(prev).add(data.agent));
         if (data.agent === 'interview_coach') setActiveAgent(null); // End of phase 1
+        if (onAgentCompleted) onAgentCompleted(data.agent, data.data);
       } else if (data.event === 'gate_reached') {
         setActiveAgent(null);
         if (onGateReached) onGateReached(data.data);

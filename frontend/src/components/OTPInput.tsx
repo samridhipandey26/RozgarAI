@@ -20,7 +20,7 @@ export default function OTPInput({ length = 6, onComplete }: OTPProps) {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const value = e.target.value;
-    if (isNaN(value)) return;
+    if (isNaN(Number(value))) return;
 
     const newOtp = [...otp];
     // Take only the last character if multiple are pasted/typed
