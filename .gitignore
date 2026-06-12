@@ -4,3 +4,7 @@ __pycache__/
 *.pyc
 .env
 data/temp/
+*.db
+*.db-shm
+*.db-wal
+data/resumes/
