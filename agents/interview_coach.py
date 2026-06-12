@@ -1,4 +1,6 @@
-"""agents/interview_coach.py — Agent 5: Interview Coach"""
+"""agents/interview_coach.py — Agent 5: Interview Coach (Production)
+Always uses LLM, tailored to the specific matched job. No demo_mode.
+"""
 from __future__ import annotations
 
 import json
@@ -7,44 +9,48 @@ import re
 from typing import List
 
 from pipeline.state import PipelineStage, RozgarState
-from ui.strings_hi import TRACE_COACH_DONE
 
-MOCK_TIPS = [
-    "Samay par pahunchen aur saaf kapde pehnen — pehli mulakat mein acha impression bahut zaroori hai.",
-    "Contractor se seedha poochhen: kaam kitne din ka hai aur paise kab milenge.",
-    "Apna kaam ka tarika batayein — koi purana project ya kaam ka example share karein.",
-]
+COACH_PROMPT = """You are a friendly job coach helping an Indian blue-collar worker prepare for a job meeting.
 
-COACH_PROMPT = """You are a friendly job coach speaking to an Indian blue-collar worker in simple Hindi.
-Worker: {name}, skills: {skills}, experience: {experience} years
-Job: {job_title} paying Rs. {wage}/day at {location}
+Worker: {name}
+Primary skill: {skill}
+Experience: {experience} years
+City: {city}
 
-Give exactly 3 short, practical tips in Hindi (Devanagari script) that will help this worker 
-when they meet the contractor. Each tip should be 1 sentence, direct, and actionable.
-Respond ONLY as a JSON array of 3 strings. No preamble."""
+Job they are applying for:
+- Role: {job_title} ({job_title_hindi})
+- Employer: {employer}
+- Wage: ₹{wage}/day
+- Location: {location}
+
+Give exactly 3 practical tips in Hindi (Devanagari script) for when they meet the contractor.
+Each tip should be:
+- 1-2 short sentences
+- Direct and actionable
+- Specific to this job role and employer
+
+Respond ONLY as a JSON array of 3 Hindi strings. No preamble, no markdown."""
 
 
 def interview_coach(state: RozgarState) -> RozgarState:
     """
     Agent 5 — Interview Coach
     Input:  state.worker, state.matched_jobs[0]
-    Output: state.interview_tips (list of 3 Hindi tips)
+    Output: state.interview_tips (3 Hindi tips, role-specific)
     """
     try:
         state.current_stage = PipelineStage.INTERVIEW_COACH
 
-        if state.demo_mode or not os.getenv("ANTHROPIC_API_KEY"):
-            state.interview_tips = MOCK_TIPS
+        if not state.worker or not state.matched_jobs:
+            state.interview_tips = _generic_tips()
+            state.log("⚠️ Interview Coach: Using generic tips (no worker/job data)")
         else:
-            if state.worker and state.matched_jobs:
-                state.interview_tips = _generate_tips(state)
-            else:
-                state.interview_tips = MOCK_TIPS
+            state.log("💬 Interview Coach: Generating role-specific tips...")
+            state.interview_tips = _generate_tips(state)
+            state.log("✅ Interview Coach: Tips ready")
 
         for i, tip in enumerate(state.interview_tips, 1):
-            state.add_wa_message("bot", f"Tip {i}: {tip}")
-
-        state.log(TRACE_COACH_DONE)
+            state.add_wa_message("bot", f"💡 Tip {i}: {tip}")
 
     except Exception as e:
         state.error_message = str(e)
@@ -54,24 +60,58 @@ def interview_coach(state: RozgarState) -> RozgarState:
 
 
 def _generate_tips(state: RozgarState) -> List[str]:
-    import anthropic
-    w   = state.worker
+    api_key = os.getenv("ANTHROPIC_API_KEY", "").strip()
+    if not api_key:
+        return _generic_tips()
+
+    w = state.worker
     job = state.matched_jobs[0]
+
     prompt = COACH_PROMPT.format(
         name=w.name,
-        skills=", ".join(w.skills),
+        skill=w.skills[0] if w.skills else "helper",
         experience=w.experience_years,
-        job_title=job.title_hindi,
+        city=w.city,
+        job_title=job.title,
+        job_title_hindi=job.title_hindi,
+        employer=job.employer_name or "Contractor",
         wage=job.wage_per_day,
         location=job.location,
     )
-    client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
-    msg = client.messages.create(
-        model="claude-sonnet-4-6",
-        max_tokens=512,
-        messages=[{"role": "user", "content": prompt}],
-    )
-    raw = msg.content[0].text.strip()
-    raw = re.sub(r"```(?:json)?", "", raw).strip().rstrip("`")
-    tips = json.loads(raw)
-    return tips[:3]
+
+    try:
+        import anthropic
+        client = anthropic.Anthropic(api_key=api_key)
+        msg = client.messages.create(
+            model="claude-sonnet-4-6",
+            max_tokens=600,
+            messages=[{"role": "user", "content": prompt}],
+        )
+        raw = msg.content[0].text.strip()
+        raw = re.sub(r"```(?:json)?", "", raw).strip().rstrip("`").strip()
+
+        # Try JSON parse
+        try:
+            tips = json.loads(raw)
+            if isinstance(tips, list) and len(tips) >= 1:
+                return [str(t) for t in tips[:3]]
+        except json.JSONDecodeError:
+            pass
+
+        # Fallback: extract lines that look like tips
+        lines = [l.strip().lstrip("1234567890.-) ") for l in raw.split("\n") if len(l.strip()) > 20]
+        if len(lines) >= 3:
+            return lines[:3]
+
+    except Exception as e:
+        print(f"[InterviewCoach] LLM failed: {e}")
+
+    return _generic_tips()
+
+
+def _generic_tips() -> List[str]:
+    return [
+        "समय पर पहुंचें और साफ कपड़े पहनें — पहली मुलाकात में अच्छा प्रभाव बहुत ज़रूरी है।",
+        "ठेकेदार से सीधे पूछें: काम कितने दिन का है और पैसे कब मिलेंगे।",
+        "अपना पिछला काम का अनुभव बताएं — कोई पुराना प्रोजेक्ट या उदाहरण ज़रूर शेयर करें।",
+    ]

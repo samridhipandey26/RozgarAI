@@ -1,0 +1,57 @@
+/* Tailwind v4 — single import replaces @tailwind base/components/utilities */
+@import "tailwindcss";
+
+/* ── Custom theme tokens ──────────────────────────────────────────────── */
+@theme {
+  --color-brand-orange: #F77A02;
+  --color-brand-orange-dark: #E06A00;
+  --color-brand-orange-dim: #331E0C;
+  --color-surface: #1C1C1E;
+  --color-surface-2: #222225;
+  --color-bg: #0D0D0D;
+  --color-border: #333333;
+  --color-muted: #6B7280;
+
+  --font-family-sans: 'Inter', system-ui, sans-serif;
+}
+
+/* ── Base ─────────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--font-family-sans);
+  background-color: #0D0D0D;
+  color: #ffffff;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  min-height: 100vh;
+  background-color: #0D0D0D;
+}
+
+/* ── Custom Scrollbar ─────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #111; }
+::-webkit-scrollbar-thumb { background: #444; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #666; }
+
+/* ── Form input base (applied directly in components, but useful default) */
+input, textarea, select {
+  background-color: #0D0D0D;
+  color: #ffffff;
+  border: 1px solid #333333;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.15s ease;
+  font-size: 1rem;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: #F77A02;
+  box-shadow: 0 0 0 2px rgba(247, 122, 2, 0.2);
+}

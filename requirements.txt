@@ -1,14 +1,43 @@
-streamlit>=1.35.0
-langchain>=0.2.0
-langgraph>=0.1.0
-anthropic>=0.28.0
-openai>=1.30.0
-gtts>=2.5.0
-reportlab>=4.2.0
-faiss-cpu>=1.8.0
+# ── Core Web ───────────────────────────────────────────────────────────────────
+fastapi>=0.111.0
+uvicorn[standard]>=0.30.0
+python-multipart>=0.0.9
+sse-starlette>=1.8.2
+httpx>=0.27.0
+
+# ── Database & Auth ────────────────────────────────────────────────────────────
+supabase>=2.4.0
 sqlalchemy>=2.0.0
 python-dotenv>=1.0.0
-plotly>=5.22.0
-numpy>=1.26.0
+
+# ── LLM / AI ──────────────────────────────────────────────────────────────────
+anthropic>=0.28.0
+openai>=1.30.0
+langchain>=0.2.0
+langgraph>=0.1.0
+
+# ── ASR / TTS ─────────────────────────────────────────────────────────────────
+gtts>=2.5.0
+
+# ── PDF Generation ────────────────────────────────────────────────────────────
+reportlab>=4.2.0
 Pillow>=10.3.0
+
+# ── Embeddings / Matching ─────────────────────────────────────────────────────
+faiss-cpu>=1.8.0
+numpy>=1.26.0
+
+# ── Geolocation ───────────────────────────────────────────────────────────────
+geopy>=2.4.1
 requests>=2.32.0
+
+# ── Notifications (optional) ──────────────────────────────────────────────────
+twilio>=9.0.0
+
+# ── Dev / Testing ─────────────────────────────────────────────────────────────
+pytest>=8.2.0
+pytest-asyncio>=0.23.0
+
+# ── Streamlit (kept for prototype reference, not production entry point) ───────
+streamlit>=1.35.0
+plotly>=5.22.0
