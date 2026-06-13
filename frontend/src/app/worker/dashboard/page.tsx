@@ -84,7 +84,9 @@ export default function WorkerDashboard() {
         window.open(latestResume.pdf_url, '_blank');
       } else {
         // Direct download from backend
-        window.open(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/resumes/download/${latestResume.id}?token=${JSON.parse(localStorage.getItem('supabase.auth.token') || '{}').currentSession?.access_token}`, '_blank');
+        const { data } = await (await import('@/lib/supabase')).supabase.auth.getSession();
+        const token = data?.session?.access_token || '';
+        window.open(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/resumes/download/${latestResume.id}?token=${token}`, '_blank');
       }
     }
   };

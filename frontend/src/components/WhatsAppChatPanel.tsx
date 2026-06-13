@@ -17,7 +17,7 @@ export default function WhatsAppChatPanel({ messages }: ChatProps) {
   }, [messages]);
 
   return (
-    <div className="flex flex-col h-full bg-[#111] rounded-xl border border-[#333] overflow-hidden">
+    <div className="flex flex-col min-h-full h-full bg-[#111] rounded-xl border border-[#333] overflow-hidden">
       <div className="bg-[#222225] p-4 flex items-center border-b border-[#333]">
         <div className="w-10 h-10 rounded-full bg-[#F77A02] flex items-center justify-center text-white font-bold text-xl mr-3">
           R

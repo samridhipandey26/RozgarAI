@@ -14,6 +14,7 @@ export default function WorkerOnboarding() {
   const [textInput, setTextInput] = useState('');
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [pipelineFinished, setPipelineFinished] = useState(false);
+  const hasNotifiedRef = useRef(false);
   const router = useRouter();
 
   // POST-PIPELINE STATE
@@ -30,9 +31,16 @@ export default function WorkerOnboarding() {
   const startPipeline = async (formData: FormData) => {
     console.log("[Pipeline Start] Starting new onboarding pipeline...");
     try {
-      // Get token for auth header
-      const tokenStr = localStorage.getItem('supabase.auth.token');
-      const token = tokenStr ? JSON.parse(tokenStr).currentSession?.access_token : '';
+      // Use Supabase client's getSession() — the localStorage key changed in Supabase v2
+      // and is no longer 'supabase.auth.token'. The supabase client handles this correctly.
+      const { data: sessionData } = await (await import('@/lib/supabase')).supabase.auth.getSession();
+      const token = sessionData?.session?.access_token || '';
+      
+      if (!token) {
+        console.warn("[Pipeline Start] No auth token found — user may not be logged in. user_id will be 'demo-user'.");
+      } else {
+        console.log("[Pipeline Start] Auth token obtained for user:", sessionData?.session?.user?.email);
+      }
       
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/pipeline/start`, {
         method: 'POST',
@@ -73,12 +81,21 @@ export default function WorkerOnboarding() {
   // LOGGING & STATE EXTRACT: Each stage completion
   const handleAgentCompleted = (agent: string, data: any) => {
     console.log(`[Stage Completion] ${agent}:`, data);
+    if (agent === 'voice_intake' && data?.transcript) {
+      console.log(`[VoiceIntake] ✅ Transcript received (${data.transcript.length} chars): "${data.transcript}"`);
+      setMessages(prev => [...prev, { role: 'bot', text: `✅ आपकी आवाज़ मिली: "${data.transcript}"` }]);
+    } else if (agent === 'voice_intake') {
+      console.warn('[VoiceIntake] ⚠️ Completed but transcript is empty/missing:', data);
+    }
     if (agent === 'skill_extractor' && data) {
-      // data = { name, city, skill, years_exp } from _agent_output
-      setWorkerProfile(data);
-      console.log(`[UI] Worker profile set: name=${data.name}, city=${data.city}, skill=${data.skill}`);
+      // data = { name, city, skill, years_exp, wage } from _agent_output
+      if (data.name && data.name !== 'Kaamgar' && data.skill && data.skill !== 'UNKNOWN') {
+        setWorkerProfile(data);
+        console.log(`[UI] ✅ Worker profile set: name=${data.name}, city=${data.city}, skill=${data.skill}`);
+      } else {
+        console.warn('[SkillExtractor] ⚠️ Extraction returned placeholder/default values:', data);
+      }
     } else if (agent === 'resume_builder' && data?.pdf_path) {
-      // pdf_path is now a server-relative URL e.g. /resumes/abc_v1.pdf
       setResumePath(data.pdf_path);
       console.log(`[UI] Resume path set: ${data.pdf_path}`);
     }
@@ -103,7 +120,10 @@ export default function WorkerOnboarding() {
     }
     
     setPipelineFinished(true);
-    setMessages(prev => [...prev, { role: 'bot', text: '✅ आपकी प्रोफाइल पूरी हो गई है! अब आप अपनी प्रोफाइल, रेज़्यूमे और नौकरियां देख सकते हैं।' }]);
+    if (!hasNotifiedRef.current) {
+      setMessages(prev => [...prev, { role: 'bot', text: '✅ आपकी प्रोफाइल पूरी हो गई है! अब आप अपनी प्रोफाइल, रेज़्यूमे और नौकरियां देख सकते हैं।' }]);
+      hasNotifiedRef.current = true;
+    }
   };
 
   const handlePipelineComplete = (data: any) => {
@@ -125,7 +145,7 @@ export default function WorkerOnboarding() {
       <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-6 min-h-0">
         
         {/* Left/Center Column */}
-        <div className="md:col-span-2 flex flex-col gap-4 overflow-y-auto pr-2 pb-10">
+        <div className={`md:col-span-2 flex flex-col gap-4 overflow-y-auto pr-2 ${sessionId ? 'pb-10' : 'pb-0'}`}>
           
           {workerProfile && (
             <div className="bg-[#1C1C1E] p-4 rounded-xl border border-[#F77A02]/30 flex justify-between items-center shadow-[0_0_15px_rgba(247,122,2,0.1)]">
@@ -148,7 +168,7 @@ export default function WorkerOnboarding() {
             </div>
           )}
 
-          <div className="flex-1 min-h-[350px]">
+          <div className="flex-1 min-h-[250px] transition-all duration-500">
             <WhatsAppChatPanel messages={messages} />
           </div>
           

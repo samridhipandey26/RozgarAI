@@ -45,6 +45,8 @@ export default function AgentPipelineTrace({ sessionId, onGateReached, onComplet
       } else if (data.event === 'pipeline_done') {
         source.close();
         if (onComplete) onComplete(data.data);
+      } else if (data.event === 'agent_error') {
+        setError(`${data.agent} failed: ${data.data?.error || 'Unknown error'}`);
       } else if (data.event === 'pipeline_error') {
         setError(data.data?.error || 'Pipeline failed');
         source.close();
@@ -53,12 +55,12 @@ export default function AgentPipelineTrace({ sessionId, onGateReached, onComplet
 
     source.onerror = (err) => {
       console.error('SSE Error', err);
-      setError('Connection lost to pipeline');
+      // Close on error to prevent infinite polling if backend is done/closed
       source.close();
     };
 
     return () => source.close();
-  }, [sessionId, onGateReached, onComplete]);
+  }, [sessionId]);
 
   return (
     <div className="bg-[#1C1C1E] rounded-xl p-6 border border-[#333]">
